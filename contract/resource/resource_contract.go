@@ -3,9 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
+	"log"
+	"math/rand"
+	"time"
 )
 
 const (
@@ -37,7 +39,7 @@ type GainHistory struct {
 }
 
 func (c *ResourceContract) Init(stub shim.ChaincodeStubInterface) pb.Response {
-	fmt.Println("Welcome to use resource contract!")
+	log.Println("Welcome to use resource contract!")
 	return shim.Success(nil)
 }
 
@@ -68,9 +70,10 @@ func registerUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 		return shim.Error("invalid args")
 	}
 
-	uuidStr := uuid.New().String()
+	idStr := fmt.Sprintf("%06v", rand.New(rand.NewSource(time.Now().UnixNano())).Int31n(1000000))
+
 	userKey, err := stub.CreateCompositeKey(USER_TYPE, []string{
-		uuidStr,
+		idStr,
 	})
 	if err != nil {
 		shim.Error(fmt.Sprintf("create composite key error: %s", err))
@@ -83,7 +86,7 @@ func registerUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	// 套路4：写入状态
 	user := &User{
-		ID:            uuidStr,
+		ID:            idStr,
 		Username:      name,
 		Resources:     make([]Resource, 0),
 		GainHistories: make([]GainHistory, 0),
@@ -116,7 +119,7 @@ func getAllUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	defer result.Close()
 
 	users := make([]*User, 0)
-	if result.HasNext() {
+	for result.HasNext() {
 		userKV, err := result.Next()
 		if err != nil {
 			return shim.Error(fmt.Sprintf("query next user error: %s", err))
