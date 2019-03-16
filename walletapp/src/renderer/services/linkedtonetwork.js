@@ -4,14 +4,16 @@ const { FileSystemWallet, Gateway } = require('fabric-network');
 const fs = require('fs');
 const path = require('path');
 
-const ccpPath = path.resolve(__dirname, '..', '..', 'basic-network', 'connection.json');
-const ccpJSON = fs.readFileSync(ccpPath, 'utf8');
-const ccp = JSON.parse(ccpJSON);
-
 async function linkedToNetwork() {
-  try {
+
+  try {  
+
+    const ccpPath = path.resolve(process.cwd(), 'connection.json');
+    const ccpJSON = fs.readFileSync(ccpPath, 'utf8');
+    const ccp = JSON.parse(ccpJSON);
     // Create a new file system based wallet for managing identities.
-    const walletPath = path.join(process.cwd(), 'wallet');
+    const walletPath = path.resolve(process.cwd(), 'wallet');;
+    console.log(walletPath)
     const wallet = new FileSystemWallet(walletPath);
     console.log(`Wallet path: ${walletPath}`);
 
@@ -40,7 +42,9 @@ async function linkedToNetwork() {
     const result = await contract.evaluateTransaction('getAllUser');
     console.log('Transaction has been evaluated, result is:');
     const jr = JSON.parse(result.toString());
-    return jr;
+    for (let item of jr) {
+        console.log(JSON.stringify(item))
+    }
     
   } catch (error) {
     console.error(`Failed to evaluate transaction: ${error}`);

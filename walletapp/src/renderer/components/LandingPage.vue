@@ -7,10 +7,7 @@
           Welcome to your new project!
         </span>
         <span class="title">
-          <button @click="callfunc">点击我</button>
-        </span>
-        <span class="title">
-          <div>{{debugValue}}<div>
+          <button @click="callFunc">点击我</button>
         </span>
         <system-information></system-information>
       </div>
@@ -52,8 +49,7 @@
         this.$electron.shell.openExternal(link);
       },
       async callFunc() {
-        const res = await linkedToNetwork();
-        this.debugValue = JSON.stringify(res);
+        await linkedToNetwork();
       },
     },
   };
