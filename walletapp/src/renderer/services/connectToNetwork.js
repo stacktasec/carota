@@ -4,7 +4,7 @@ const { FileSystemWallet, Gateway } = require('fabric-network');
 const fs = require('fs');
 const path = require('path');
 
-async function linkedToNetwork() {
+async function connectToNetwork() {
 
   try {  
 
@@ -13,17 +13,8 @@ async function linkedToNetwork() {
     const ccp = JSON.parse(ccpJSON);
     // Create a new file system based wallet for managing identities.
     const walletPath = path.resolve(process.cwd(), 'wallet');;
-    console.log(walletPath)
     const wallet = new FileSystemWallet(walletPath);
     console.log(`Wallet path: ${walletPath}`);
-
-    // Check to see if we've already enrolled the user.
-    const userExists = await wallet.exists('user1');
-    if (!userExists) {
-      console.log('An identity for the user "user1" does not exist in the wallet');
-      console.log('Run the registerUser.js application before retrying');
-      return;
-    }
 
     // Create a new gateway for connecting to our peer node.
     const gateway = new Gateway();
@@ -31,7 +22,6 @@ async function linkedToNetwork() {
 
     // Get the network (channel) our contract is deployed to.
     const network = await gateway.getNetwork('mychannel');
-
 
     // Get the contract from the network.
     const contract = network.getContract('resource');
@@ -41,10 +31,9 @@ async function linkedToNetwork() {
     // queryAllCars transaction - requires no arguments, ex: ('queryAllCars')
     const result = await contract.evaluateTransaction('getAllUser');
     console.log('Transaction has been evaluated, result is:');
+    console.log(result.toString())
     const jr = JSON.parse(result.toString());
-    for (let item of jr) {
-        console.log(JSON.stringify(item))
-    }
+    return jr;
     
   } catch (error) {
     console.error(`Failed to evaluate transaction: ${error}`);
@@ -52,4 +41,4 @@ async function linkedToNetwork() {
   }
 }
 
-export default linkedToNetwork;
+export default connectToNetwork;

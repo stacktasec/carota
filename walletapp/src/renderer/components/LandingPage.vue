@@ -8,6 +8,7 @@
         </span>
         <span class="title">
           <button @click="callFunc">点击我</button>
+          <button @click="start">启动</button>
         </span>
         <system-information></system-information>
       </div>
@@ -33,8 +34,11 @@
 </template>
 
 <script>
+  /* eslint-disable */
+
   import SystemInformation from './LandingPage/SystemInformation';
-  import linkedToNetwork from '../services/linkedtonetwork';
+  import connectToNetwork from '../services/connectToNetwork';
+  import startExpress from '../services/startExpress';
 
   export default {
     name: 'landing-page',
@@ -49,8 +53,11 @@
         this.$electron.shell.openExternal(link);
       },
       async callFunc() {
-        await linkedToNetwork();
+        await connectToNetwork();
       },
+      start() {
+        startExpress();
+      }
     },
   };
 </script>
