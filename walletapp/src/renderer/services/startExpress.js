@@ -14,7 +14,7 @@ function startExpress(){
     })
     
     console.log('The express is running.')
-    app.listen(3000)
+    const server = app.listen(3000)
 }
 
 export default startExpress;
