@@ -11,8 +11,8 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-col :offset="6" :span="12">
-        <span class="title">Welcome to your new project!</span>
+      <el-col :offset="8" :span="12">
+        <span class="title">欢迎使用Carota钱包服务</span>
       </el-col>
     </el-row>
     <el-row>
@@ -20,9 +20,9 @@
     </el-row>
     <el-row>
       <el-col :offset="4" :span="16">
-        <el-button type="success" @click="callFunc">调用一次</el-button>
-        <el-button type="success" @click="start">启动服务器</el-button>
-        <el-button type="success" @click="discovery">发现钱包</el-button>
+        <el-button type="success" @click="callFunc">模拟调用</el-button>
+        <el-button type="success" @click="startWalletService">启动钱包服务</el-button>
+        <el-button type="info" @click="stopWalletService">关闭钱包服务</el-button>
       </el-col>
     </el-row>
     <el-row>
@@ -66,13 +66,11 @@ export default {
     return {
       log: "",
       isConnected: false,
-      user: ""
+      user: "",
+      server: null
     };
   },
   methods: {
-    open(link) {
-      this.$electron.shell.openExternal(link);
-    },
     async callFunc() {
       let msg = "";
       try {
@@ -87,10 +85,10 @@ export default {
       let now = getNow();
       this.log = `${now}${log}\n` + `${this.log}`;
     },
-    discovery() {
+    startWalletService() {
       let user = discoveryWallet();
-      if(!user){
-        this.showAlert('未发现钱包用户，请确保wallet和本应用在同一目录内！')
+      if (!user) {
+        this.showAlert("未发现钱包用户，请确保wallet和本应用在同一目录内！");
         return;
       }
 
@@ -99,9 +97,20 @@ export default {
         async () => {
           let result = await connectToFabric(user);
           if (result) {
+            let server = startExpress();
+            if (!server) {
+              this.showAlert(
+                "连接Fabric网络成功，但钱包服务启动失败，请检查3000端口是否被占用"
+              );
+              return;
+            }
+
             this.user = user;
             this.isConnected = true;
+            this.server = server;
+
             this.showAlert("连接成功！");
+
           } else {
             this.showAlert(
               "连接失败，请检查wallet文件夹以及connection.json文件！"
@@ -109,6 +118,22 @@ export default {
           }
         }
       );
+    },
+    stopWalletService() {
+
+      if(this.server){
+        this.server.close();
+        this.server = null;
+        const loading = this.$loading({
+          lock: true,
+          text: '关闭中',
+        });
+        setTimeout(() => {
+          loading.close();
+          this.user = '';
+          this.isConnected =false;
+        }, 3000);
+      }
     },
     showAlert(msg) {
       this.$alert(msg, "提示", {
@@ -120,7 +145,7 @@ export default {
       this.$confirm(challenge, "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        showClose: false,
+        showClose: false
       })
         .then(() => {
           func();

@@ -4,17 +4,24 @@ import express from 'express'
 import cors from 'cors'
 import connectToNetwork from '../services/connectToNetwork'
 
-function startExpress(){
-    const app = express()
-    app.use(cors())
-    
-    app.get('/', async function (req, res) {
-        let jr = await connectToNetwork();
-        res.json(jr)
-    })
-    
-    console.log('The express is running.')
-    const server = app.listen(3000)
+function startExpress() {
+
+    try {
+        const app = express()
+        app.use(cors())
+
+        app.get('/', async function (req, res) {
+            let jr = await connectToNetwork();
+            res.json(jr)
+        })
+
+        console.log('The express is running.')
+        const server = app.listen(3000)
+        return server;
+
+    } catch (err) {
+        return null;
+    }
 }
 
 export default startExpress;
