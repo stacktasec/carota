@@ -32,4 +32,25 @@ async function connectToFabric(user) {
   }
 }
 
-export { discoveryWallet, connectToFabric };
+class WalletService {
+  constructor(gateway) {
+    this.gateway = gateway;
+  }
+
+  async evaluateContract(channelId, contractId, funcName, ...args) {
+    const network = await gateway.getNetwork(channelId);
+    const contract = network.getContract(contractId);
+    const result = await contract.evaluateTransaction(funcName, ...args);
+    return JSON.parse(result.toString())
+  }
+
+  async submitContract(channelId, contractId, funcName, ...args) {
+    const network = await gateway.getNetwork(channelId);
+    const contract = network.getContract(contractId);
+    const result = await contract.submitTransaction(funcName, ...args);
+    return JSON.parse(result.toString())
+  }
+}
+
+
+export { discoveryWallet, connectToFabric, WalletService };
