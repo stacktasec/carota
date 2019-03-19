@@ -26,9 +26,9 @@ async function connectToFabric(user) {
 
     const gateway = new Gateway();
     await gateway.connect(ccp, { wallet, identity: user, discovery: { enabled: false } });
-    return true;
+    return new WalletService(gateway);
   } catch (error) {
-    return false;
+    return null;
   }
 }
 
@@ -38,17 +38,16 @@ class WalletService {
   }
 
   async evaluateContract(channelId, contractId, funcName, ...args) {
-    const network = await gateway.getNetwork(channelId);
+    const network = await this.gateway.getNetwork(channelId);
     const contract = network.getContract(contractId);
     const result = await contract.evaluateTransaction(funcName, ...args);
     return JSON.parse(result.toString())
   }
 
   async submitContract(channelId, contractId, funcName, ...args) {
-    const network = await gateway.getNetwork(channelId);
+    const network = await this.gateway.getNetwork(channelId);
     const contract = network.getContract(contractId);
-    const result = await contract.submitTransaction(funcName, ...args);
-    return JSON.parse(result.toString())
+    await contract.submitTransaction(funcName, ...args);
   }
 }
 

@@ -19,8 +19,7 @@
       <br>
     </el-row>
     <el-row>
-      <el-col :offset="4" :span="16">
-        <el-button type="success" @click="callFunc">模拟调用</el-button>
+      <el-col :offset="7" :span="16">
         <el-button type="success" @click="startWalletService">启动钱包服务</el-button>
         <el-button type="info" @click="stopWalletService">关闭钱包服务</el-button>
       </el-col>
@@ -54,7 +53,6 @@
 <script>
 /* eslint-disable */
 
-import connectToNetwork from "../services/connectToNetwork";
 import { discoveryWallet, connectToFabric } from "../services/operations";
 import startExpress from "../services/startExpress";
 import { getNow } from "../services/utils";
@@ -67,20 +65,10 @@ export default {
       log: "",
       isConnected: false,
       user: "",
-      server: null
+      server: null,
     };
   },
   methods: {
-    async callFunc() {
-      let msg = "";
-      try {
-        msg = await connectToNetwork();
-      } catch (error) {}
-      this.displayMsg(JSON.stringify(msg));
-    },
-    start() {
-      startExpress();
-    },
     displayMsg(log) {
       let now = getNow();
       this.log = `${now}${log}\n` + `${this.log}`;
@@ -95,9 +83,9 @@ export default {
       this.showConfirm(
         `发现钱包用户${user}，是否连接到Fabric网络？`,
         async () => {
-          let result = await connectToFabric(user);
-          if (result) {
-            let server = startExpress();
+          let walletService = await connectToFabric(user);
+          if (walletService) {
+            let server = startExpress(walletService);
             if (!server) {
               this.showAlert(
                 "连接Fabric网络成功，但钱包服务启动失败，请检查3000端口是否被占用"

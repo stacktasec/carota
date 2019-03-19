@@ -2,17 +2,32 @@
 
 import express from 'express'
 import cors from 'cors'
-import connectToNetwork from '../services/connectToNetwork'
+import bodyParser from 'body-parser'
 
-function startExpress() {
+function startExpress(walletService) {
 
     try {
         const app = express()
+        app.walletService = walletService;
         app.use(cors())
+        app.use(bodyParser.json());
 
-        app.get('/', async function (req, res) {
-            let jr = await connectToNetwork();
-            res.json(jr)
+        app.post('/evaluate', async function (req, res) {
+            let channel = req.body.channel;
+            let contract = req.body.contract;
+            let func = req.body.func;
+            let args = req.body.args;
+            let result = await app.walletService.evaluateContract(channel, contract, func, ...args);
+            res.json(result);
+        })
+
+        app.post('/submit', async function (req, res) {
+            let channel = req.body.channel;
+            let contract = req.body.contract;
+            let func = req.body.func;
+            let args = req.body.args;
+            await app.walletService.submitContract(channel, contract, func, ...args);
+            res.json()
         })
 
         console.log('The express is running.')
