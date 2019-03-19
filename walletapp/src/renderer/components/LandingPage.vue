@@ -44,7 +44,9 @@
     </el-row>
     <el-row>
       <el-col :offset="1" :span="22">
-        <el-input type="textarea" :rows="10" placeholder v-model="log"></el-input>
+        <div class="scrollable">
+          <logitem :logItem="item" v-for="item in logs" :key="item.logId"></logitem>
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -56,22 +58,29 @@
 import { discoveryWallet, connectToFabric } from "../services/operations";
 import startExpress from "../services/startExpress";
 import { getNow } from "../services/utils";
+import logitem from "./LogItem.vue";
 
 export default {
   name: "landing-page",
-  components: {},
+  components: { logitem },
   data() {
     return {
-      log: "",
+      logs: [],
       isConnected: false,
       user: "",
       server: null,
+      logId:0,
     };
   },
   methods: {
-    displayMsg(log) {
-      let now = getNow();
-      this.log = `${now}${log}\n` + `${this.log}`;
+    addLog(msg) {
+      let log = {
+        logId:this.logId,
+        timeStr: getNow(),
+        content: "121212"
+      };
+      this.logs.unshift(log)
+      this.logId++;
     },
     startWalletService() {
       let user = discoveryWallet();
@@ -98,7 +107,6 @@ export default {
             this.server = server;
 
             this.showAlert("连接成功！");
-
           } else {
             this.showAlert(
               "连接失败，请检查wallet文件夹以及connection.json文件！"
@@ -108,20 +116,20 @@ export default {
       );
     },
     stopWalletService() {
-
-      if(this.server){
+      if (this.server) {
         this.server.close();
         this.server = null;
         const loading = this.$loading({
           lock: true,
-          text: '关闭中',
+          text: "关闭中"
         });
         setTimeout(() => {
           loading.close();
-          this.user = '';
-          this.isConnected =false;
+          this.user = "";
+          this.isConnected = false;
         }, 3000);
       }
+      this.addLog('dfdf')
     },
     showAlert(msg) {
       this.$alert(msg, "提示", {
@@ -203,5 +211,16 @@ body {
 .doc button.alt {
   color: #42b983;
   background-color: transparent;
+}
+
+.scrollable {
+  margin: 10px;
+  padding: 5px;
+  height: 200px;
+  background: white;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  border: solid gainsboro;
+  font-size: 15px;
 }
 </style>
