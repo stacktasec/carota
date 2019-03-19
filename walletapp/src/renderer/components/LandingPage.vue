@@ -1,41 +1,72 @@
 <template>
   <div id="wrapper">
-    <div>
-      <img id="logo" src="~@/assets/planet.png">
-    </div>
-    <div>
-      <main>
-        <div class="left-side">
-          <span class="title">Welcome to your new project!</span>
-          <span class="title">
-            <button @click="callFunc">调用一次</button>
-            <button @click="start">启动服务器</button>
-            <button @click="showBox">弹窗</button>
-          </span>
-          <span class="title">           
-            <span>用户 User1已连接</span>
-            <span>&nbsp;</span>
-            <el-button type="success" icon="el-icon-check" circle></el-button>
-          </span>
+    <el-row>
+      <br>
+    </el-row>
+    <el-row>
+      <el-col :offset="7" :span="16">
+        <div>
+          <img id="logo" src="~@/assets/planet.png">
         </div>
-      </main>
-    </div>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :offset="6" :span="12">
+        <span class="title">Welcome to your new project!</span>
+      </el-col>
+    </el-row>
+    <el-row>
+      <br>
+    </el-row>
+    <el-row>
+      <el-col :offset="4" :span="16">
+        <el-button type="success" @click="callFunc">调用一次</el-button>
+        <el-button type="success" @click="start">启动服务器</el-button>
+        <el-button type="success" @click="discovery">发现钱包</el-button>
+      </el-col>
+    </el-row>
+    <el-row>
+      <br>
+    </el-row>
+    <el-row>
+      <el-col :offset="8" :span="16" v-if="isConnected">
+        <el-button type="success" icon="el-icon-check" circle></el-button>
+        <span>&nbsp;</span>
+        <span>用户 {{user}}已连接</span>
+      </el-col>
+      <el-col :offset="8" :span="16" v-else>
+        <el-button type="danger" icon="el-icon-close" circle></el-button>
+        <span>&nbsp;</span>
+        <span>未连接到Fabric网络</span>
+      </el-col>
+    </el-row>
+    <el-row>
+      <br>
+    </el-row>
+    <el-row>
+      <el-col :offset="1" :span="22">
+        <el-input type="textarea" :rows="10" placeholder v-model="log"></el-input>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
 /* eslint-disable */
 
-import SystemInformation from "./LandingPage/SystemInformation";
 import connectToNetwork from "../services/connectToNetwork";
+import { discoveryWallet, connectToFabric } from "../services/operations";
 import startExpress from "../services/startExpress";
+import { getNow } from "../services/utils";
 
 export default {
   name: "landing-page",
-  components: { SystemInformation },
+  components: {},
   data() {
     return {
-      debugValue: ""
+      log: "",
+      isConnected: false,
+      user: ""
     };
   },
   methods: {
@@ -43,18 +74,59 @@ export default {
       this.$electron.shell.openExternal(link);
     },
     async callFunc() {
+      let msg = "";
       try {
-        await connectToNetwork();
+        msg = await connectToNetwork();
       } catch (error) {}
+      this.displayMsg(JSON.stringify(msg));
     },
     start() {
       startExpress();
     },
-    showBox(){
-      this.$alert('这是一段内容', '标题名称', {
-          confirmButtonText: '确定',
-          showClose:false,
-          center:true,
+    displayMsg(log) {
+      let now = getNow();
+      this.log = `${now}${log}\n` + `${this.log}`;
+    },
+    discovery() {
+      let user = discoveryWallet();
+      if(!user){
+        this.showAlert('未发现钱包用户，请确保wallet和本应用在同一目录内！')
+        return;
+      }
+
+      this.showConfirm(
+        `发现钱包用户${user}，是否连接到Fabric网络？`,
+        async () => {
+          let result = await connectToFabric(user);
+          if (result) {
+            this.user = user;
+            this.isConnected = true;
+            this.showAlert("连接成功！");
+          } else {
+            this.showAlert(
+              "连接失败，请检查wallet文件夹以及connection.json文件！"
+            );
+          }
+        }
+      );
+    },
+    showAlert(msg) {
+      this.$alert(msg, "提示", {
+        confirmButtonText: "确定",
+        showClose: false
+      });
+    },
+    showConfirm(challenge, func) {
+      this.$confirm(challenge, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        showClose: false,
+      })
+        .then(() => {
+          func();
+        })
+        .catch(() => {
+          this.showAlert("操作已取消");
         });
     }
   }
@@ -80,36 +152,8 @@ body {
     rgba(255, 255, 255, 1) 40%,
     rgba(229, 229, 229, 0.9) 100%
   );
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  align-items:center;
-  justify-content:center;
-  height: 500px;
-}
-
-#logo {
-  
-}
-
-main {
-  display: flex;
-  justify-content: space-between;
-}
-
-main > div {
-  flex-basis: 100%;
-}
-
-.left-side {
-  display: flex;
-  flex-direction: column;
-}
-
-.welcome {
-  color: #555;
-  font-size: 23px;
-  margin-bottom: 10px;
+  height: 685px;
+  width: 685px;
 }
 
 .title {
