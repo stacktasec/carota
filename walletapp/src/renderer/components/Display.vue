@@ -35,7 +35,7 @@ export default {
   mounted() {
     let scene = new Scene();
     let camera = new PerspectiveCamera(
-      75,
+      50,
       window.innerWidth / window.innerHeight,
       0.1,
       1000
@@ -94,15 +94,21 @@ export default {
       this.id = requestAnimationFrame(this.render);
       this.earth.rotation.y += 0.01;
       this.renderer.render(this.scene, this.camera);
+    },
+    stop() {
+      if (id !== null) {
+        cancelAnimationFrame(id);
+        id = null;
+      }
     }
   }
 };
 </script>
 
 <style scoped>
-  #container{
-    background: #FCFCFC
-  }
+#container {
+  background: #fcfcfc;
+}
 </style>
 
 

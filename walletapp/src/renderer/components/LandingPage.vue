@@ -4,10 +4,8 @@
       <br>
     </el-row>
     <el-row>
-      <el-col :offset="7" :span="16">
-        <div>
-          <display></display>
-        </div>
+      <el-col :offset="8" :span="16">
+        <display></display>
       </el-col>
     </el-row>
     <el-row>
@@ -19,7 +17,7 @@
       <br>
     </el-row>
     <el-row>
-      <el-col :offset="7" :span="16">
+      <el-col :offset="7" :span="12">
         <el-button type="success" @click="startWalletService">启动钱包服务</el-button>
         <el-button type="info" @click="stopWalletService">关闭钱包服务</el-button>
       </el-col>
@@ -38,9 +36,6 @@
         <span>&nbsp;</span>
         <span>未连接到Fabric网络</span>
       </el-col>
-    </el-row>
-    <el-row>
-      <br>
     </el-row>
     <el-row>
       <el-col :offset="1" :span="22">
@@ -228,9 +223,8 @@ body {
 .scrollable {
   margin: 10px;
   padding: 5px;
-  height: 200px;
+  height: 240px;
   background: white;
-  overflow-x: scroll;
   overflow-y: scroll;
   border: solid gainsboro;
   font-size: 15px;
