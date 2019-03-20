@@ -106,12 +106,12 @@ export default {
               return;
             }
 
-            console.log(server);
             this.user = user;
             this.isConnected = true;
             this.server = server;
             this.originalLogs = originalLogs;
 
+            this.addLog(1, "Service started.");
             this.showAlert("连接成功！");
           } else {
             this.showAlert(
@@ -160,7 +160,6 @@ export default {
   watch: {
     originalLogs() {
       if (this.originalLogs.length === 0) {
-        this.addLog(1, "Service started.");
         return;
       }
       let { type, msg } = this.originalLogs[this.originalLogs.length - 1];
