@@ -5,7 +5,7 @@
     </el-row>
     <el-row>
       <el-col :offset="8" :span="16">
-        <display></display>
+        <display ref="earth"></display>
       </el-col>
     </el-row>
     <el-row>
@@ -83,6 +83,12 @@ export default {
       this.logId++;
     },
     startWalletService() {
+      
+      if(this.isConnected){
+        this.showAlert("已开启服务，请勿重复开启！");
+        return;
+      }
+
       let user = discoveryWallet();
       if (!user) {
         this.showAlert("未发现钱包用户，请确保wallet和本应用在同一目录内！");
@@ -109,6 +115,7 @@ export default {
 
             this.addLog(1, "Service started.");
             this.showAlert("连接成功！");
+            this.$refs.earth.render();
           } else {
             this.showAlert(
               "连接失败，请检查wallet文件夹以及connection.json文件！"
@@ -118,6 +125,13 @@ export default {
       );
     },
     stopWalletService() {
+
+      if(!this.isConnected){
+        this.showAlert("已开启服务，请勿重复开启！");
+        return;
+      }
+
+      this.$refs.earth.stop();
       if (this.server) {
         this.server.close();
         this.server = null;

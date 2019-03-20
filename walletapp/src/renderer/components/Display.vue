@@ -80,25 +80,28 @@ export default {
     camera.position.z = 5;
 
     let id = requestAnimationFrame(this.render);
-    earth.rotation.y = 0.01;
     renderer.render(scene, camera);
-
     this.id = id;
+
     this.earth = earth;
     this.renderer = renderer;
     this.scene = scene;
     this.camera = camera;
+
+    setTimeout(() => {
+      this.stop();
+    }, 2650);
   },
   methods: {
     render() {
       this.id = requestAnimationFrame(this.render);
-      this.earth.rotation.y += 0.01;
+      this.earth.rotation.y += 0.02;
       this.renderer.render(this.scene, this.camera);
     },
     stop() {
-      if (id !== null) {
-        cancelAnimationFrame(id);
-        id = null;
+      if (this.id !== null) {
+        cancelAnimationFrame(this.id);
+        this.id = null;
       }
     }
   }
