@@ -10,7 +10,9 @@
     </el-row>
     <el-row>
       <el-col :offset="8" :span="12">
-        <span class="title">欢迎使用Carota钱包服务</span>
+        <transition name="bounce">
+          <p class="title" v-if="show">欢迎使用Carota钱包服务</p>
+        </transition>
       </el-col>
     </el-row>
     <el-row>
@@ -59,9 +61,10 @@ import display from "./Display.vue";
 
 export default {
   name: "landing-page",
-  components: { logitem,display },
+  components: { logitem, display },
   data() {
     return {
+      show: false,
       logs: [],
       isConnected: false,
       user: "",
@@ -83,8 +86,7 @@ export default {
       this.logId++;
     },
     startWalletService() {
-      
-      if(this.isConnected){
+      if (this.isConnected) {
         this.showAlert("已开启服务，请勿重复开启！");
         return;
       }
@@ -125,9 +127,8 @@ export default {
       );
     },
     stopWalletService() {
-
-      if(!this.isConnected){
-        this.showAlert("已开启服务，请勿重复开启！");
+      if (!this.isConnected) {
+        this.showAlert("服务未开启，操作无效！");
         return;
       }
 
@@ -144,7 +145,7 @@ export default {
           this.user = "";
           this.isConnected = false;
           this.addLog(0, "Service stoped.");
-        }, 3000);  
+        }, 3000);
       }
     },
     showAlert(msg) {
@@ -166,6 +167,9 @@ export default {
           this.showAlert("操作已取消");
         });
     }
+  },
+  mounted() {
+    this.show = true;
   },
   watch: {
     originalLogs() {
@@ -193,7 +197,7 @@ body {
 }
 
 #wrapper {
-  background:#FCFCFC;
+  background: #fcfcfc;
   height: 685px;
   width: 685px;
 }
@@ -242,5 +246,36 @@ body {
   overflow-y: scroll;
   border: solid gainsboro;
   font-size: 15px;
+}
+
+.bounce-enter-active {
+  animation: bounce-left 2.5s;
+}
+
+@keyframes bounce-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-20000px);
+  }
+  80% {
+    opacity: 0.5;
+    transform: translateX(80px);
+  }
+  85% {
+    opacity: 0.8;
+    transform: translateX(-60px);
+  }
+  90% {
+    opacity: 1;
+    transform: translateX(40px);
+  }
+  95% {
+    opacity: 1;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 </style>
