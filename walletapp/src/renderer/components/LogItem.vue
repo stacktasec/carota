@@ -1,7 +1,6 @@
 <template>
   <p :class="[logItem.type===1?'log-success':'log-fail']">
-    <span>{{logItem.timeStr}}</span>
-    <span>{{logItem.content}}</span>
+    {{logItem.timeStr}}&nbsp;{{logItem.content}}
   </p>
 </template>
 
