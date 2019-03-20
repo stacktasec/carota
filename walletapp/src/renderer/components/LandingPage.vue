@@ -106,6 +106,7 @@ export default {
               return;
             }
 
+            console.log(server);
             this.user = user;
             this.isConnected = true;
             this.server = server;
@@ -132,9 +133,9 @@ export default {
           loading.close();
           this.user = "";
           this.isConnected = false;
-        }, 3000);
+          this.addLog(0, "Service stoped.");
+        }, 3000);  
       }
-      this.addLog("dfdf");
     },
     showAlert(msg) {
       this.$alert(msg, "提示", {

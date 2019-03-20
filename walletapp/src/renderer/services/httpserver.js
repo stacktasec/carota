@@ -51,7 +51,7 @@ function startExpress(walletService) {
 
         console.log('The express is running.')
         const server = app.listen(3000)
-        return { server, originalLogs };
+        return server;
 
     } catch (err) {
         return null;
