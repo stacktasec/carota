@@ -64,6 +64,7 @@
     "fabric-network": "~1.4.0",
     "fs": "0.0.1-security",
     "path": "^0.12.7",
+    "three": "^0.102.1",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",

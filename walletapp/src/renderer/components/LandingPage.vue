@@ -6,7 +6,7 @@
     <el-row>
       <el-col :offset="7" :span="16">
         <div>
-          <img id="logo" src="~@/assets/planet.png">
+          <display></display>
         </div>
       </el-col>
     </el-row>
@@ -60,10 +60,11 @@ import { discoveryWallet, connectToFabric } from "../services/operations";
 import { startExpress, originalLogs } from "../services/httpserver";
 import { getNow } from "../services/utils";
 import logitem from "./LogItem.vue";
+import display from "./Display.vue";
 
 export default {
   name: "landing-page",
-  components: { logitem },
+  components: { logitem,display },
   data() {
     return {
       logs: [],
@@ -183,11 +184,7 @@ body {
 }
 
 #wrapper {
-  background: radial-gradient(
-    ellipse at top left,
-    rgba(255, 255, 255, 1) 40%,
-    rgba(229, 229, 229, 0.9) 100%
-  );
+  background:#FCFCFC;
   height: 685px;
   width: 685px;
 }
