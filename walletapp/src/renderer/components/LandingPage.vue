@@ -49,6 +49,7 @@
         </div>
       </el-col>
     </el-row>
+    <!-- <button @click="debugFunc">调试</button> -->
   </div>
 </template>
 
@@ -56,7 +57,7 @@
 /* eslint-disable */
 
 import { discoveryWallet, connectToFabric } from "../services/operations";
-import startExpress from "../services/startExpress";
+import { startExpress, originalLogs } from "../services/httpserver";
 import { getNow } from "../services/utils";
 import logitem from "./LogItem.vue";
 
@@ -69,17 +70,20 @@ export default {
       isConnected: false,
       user: "",
       server: null,
-      logId:0,
+      logId: 0,
+      originalLogs: []
     };
   },
   methods: {
-    addLog(msg) {
+    debugFunc() {},
+    addLog(type, msg) {
       let log = {
-        logId:this.logId,
+        type,
+        logId: this.logId,
         timeStr: getNow(),
-        content: "121212"
+        content: msg
       };
-      this.logs.unshift(log)
+      this.logs.unshift(log);
       this.logId++;
     },
     startWalletService() {
@@ -105,6 +109,7 @@ export default {
             this.user = user;
             this.isConnected = true;
             this.server = server;
+            this.originalLogs = originalLogs;
 
             this.showAlert("连接成功！");
           } else {
@@ -129,7 +134,7 @@ export default {
           this.isConnected = false;
         }, 3000);
       }
-      this.addLog('dfdf')
+      this.addLog("dfdf");
     },
     showAlert(msg) {
       this.$alert(msg, "提示", {
@@ -149,6 +154,16 @@ export default {
         .catch(() => {
           this.showAlert("操作已取消");
         });
+    }
+  },
+  watch: {
+    originalLogs() {
+      if (this.originalLogs.length === 0) {
+        this.addLog(1, "Service started.");
+        return;
+      }
+      let { type, msg } = this.originalLogs[this.originalLogs.length - 1];
+      this.addLog(type, msg);
     }
   }
 };
