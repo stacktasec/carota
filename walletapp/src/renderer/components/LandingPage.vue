@@ -53,21 +53,21 @@
 <script>
 /* eslint-disable */
 
-import { discoveryWallet, connectToFabric } from "../services/operations";
-import { startExpress, originalLogs } from "../services/httpserver";
-import { getNow } from "../services/utils";
-import logitem from "./LogItem.vue";
-import display from "./Display.vue";
+import { discoveryWallet, connectToFabric } from '../services/operations';
+import { startExpress, originalLogs } from '../services/httpserver';
+import { getNow } from '../services/utils';
+import logitem from './LogItem.vue';
+import display from './Display.vue';
 
 export default {
-  name: "landing-page",
+  name: 'landing-page',
   components: { logitem, display },
   data() {
     return {
       show: false,
       logs: [],
       isConnected: false,
-      user: "",
+      user: '',
       server: null,
       logId: 0,
       originalLogs: []
@@ -87,13 +87,13 @@ export default {
     },
     startWalletService() {
       if (this.isConnected) {
-        this.showAlert("已开启服务，请勿重复开启！");
+        this.showAlert('已开启服务，请勿重复开启！');
         return;
       }
 
       let user = discoveryWallet();
       if (!user) {
-        this.showAlert("未发现钱包用户，请确保wallet和本应用在同一目录内！");
+        this.showAlert('未发现钱包用户，请确保wallet和本应用在同一目录内！');
         return;
       }
 
@@ -105,7 +105,7 @@ export default {
             let server = startExpress(walletService);
             if (!server) {
               this.showAlert(
-                "连接Fabric网络成功，但钱包服务启动失败，请检查3000端口是否被占用"
+                '连接Fabric网络成功，但钱包服务启动失败，请检查3000端口是否被占用'
               );
               return;
             }
@@ -115,12 +115,12 @@ export default {
             this.server = server;
             this.originalLogs = originalLogs;
 
-            this.addLog(1, "Service started.");
-            this.showAlert("连接成功！");
+            this.addLog(1, 'Service started.');
+            this.showAlert('连接成功！');
             this.$refs.earth.render();
           } else {
             this.showAlert(
-              "连接失败，请检查wallet文件夹以及connection.json文件！"
+              '连接失败，请检查wallet文件夹以及connection.json文件！'
             );
           }
         }
@@ -128,7 +128,7 @@ export default {
     },
     stopWalletService() {
       if (!this.isConnected) {
-        this.showAlert("服务未开启，操作无效！");
+        this.showAlert('服务未开启，操作无效！');
         return;
       }
 
@@ -138,33 +138,33 @@ export default {
         this.server = null;
         const loading = this.$loading({
           lock: true,
-          text: "关闭中"
+          text: '关闭中'
         });
         setTimeout(() => {
           loading.close();
-          this.user = "";
+          this.user = '';
           this.isConnected = false;
-          this.addLog(0, "Service stoped.");
+          this.addLog(0, 'Service stoped.');
         }, 3000);
       }
     },
     showAlert(msg) {
-      this.$alert(msg, "提示", {
-        confirmButtonText: "确定",
+      this.$alert(msg, '提示', {
+        confirmButtonText: '确定',
         showClose: false
       });
     },
     showConfirm(challenge, func) {
-      this.$confirm(challenge, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
+      this.$confirm(challenge, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
         showClose: false
       })
         .then(() => {
           func();
         })
         .catch(() => {
-          this.showAlert("操作已取消");
+          this.showAlert('操作已取消');
         });
     }
   },
@@ -184,7 +184,7 @@ export default {
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro");
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
 
 * {
   box-sizing: border-box;
@@ -193,7 +193,7 @@ export default {
 }
 
 body {
-  font-family: "Source Sans Pro", sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
 }
 
 #wrapper {

@@ -15,14 +15,14 @@ import {
   MeshBasicMaterial,
   DoubleSide,
   Mesh
-} from "three";
+} from 'three';
 
-import earthmap from "../assets/earthmap.jpg";
-import earthspec from "../assets/earthspec.jpg";
-import earthbump from "../assets/earthbump.jpg";
+import earthmap from '../assets/earthmap.jpg';
+import earthspec from '../assets/earthspec.jpg';
+import earthbump from '../assets/earthbump.jpg';
 
 export default {
-  name: "display",
+  name: 'display',
   data() {
     return {
       id: null,
@@ -44,7 +44,7 @@ export default {
     let renderer = new WebGLRenderer({ alpha: true });
     renderer.setSize(window.innerWidth / 3, window.innerHeight / 3);
     renderer.setClearColor(0xfcfcfc, 1);
-    document.getElementById("container").appendChild(renderer.domElement);
+    document.getElementById('container').appendChild(renderer.domElement);
 
     //CONTAINER
     let container = new Object3D();
