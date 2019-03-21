@@ -90,7 +90,7 @@ export default {
 
     setTimeout(() => {
       this.stop();
-    }, 2650);
+    }, 2600);
   },
   methods: {
     render() {
