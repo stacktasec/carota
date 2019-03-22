@@ -7,7 +7,6 @@ require (
 	github.com/Shopify/sarama v1.21.0 // indirect
 	github.com/fsouza/go-dockerclient v1.3.6 // indirect
 	github.com/golang/protobuf v1.3.0 // indirect
-	github.com/google/uuid v1.1.1
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0 // indirect
 	github.com/hashicorp/go-version v1.1.0 // indirect
 	github.com/hyperledger/fabric v1.4.0

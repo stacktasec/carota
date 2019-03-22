@@ -107,6 +107,13 @@ func registerUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 }
 
 func getAllUser(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+
+	err := stub.SetEvent("sampleevent", []byte("123456StarStar"))
+	if err != nil {
+		fmt.Println("sample event failed.")
+		fmt.Println(err)
+	}
+
 	// 套路1：检查参数的个数
 	if len(args) != 0 {
 		return shim.Error("not enough args")
