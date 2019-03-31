@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
-	"log"
 	"math/rand"
 	"time"
 )
@@ -38,8 +37,10 @@ type GainHistory struct {
 	GainTime   string `json:"gain_time"`
 }
 
+var logger = shim.NewLogger("resourceInit")
+
 func (c *ResourceContract) Init(stub shim.ChaincodeStubInterface) pb.Response {
-	log.Println("Welcome to use resource contract!")
+	logger.Info("Init a new contract resource.")
 	return shim.Success(nil)
 }
 
