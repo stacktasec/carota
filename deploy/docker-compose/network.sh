@@ -89,29 +89,10 @@ function networkUp() {
     replacePrivateKey
     generateChannelArtifacts
   fi
-  if [ "${IF_COUCHDB}" == "couchdb" ]; then
-    if [ "$CONSENSUS_TYPE" == "kafka" ]; then
-      IMAGE_TAG=$IMAGETAG docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_KAFKA -f $COMPOSE_FILE_COUCH up -d 2>&1
-      docker ps -a
-    elif  [ "$CONSENSUS_TYPE" == "etcdraft" ]; then
-      IMAGE_TAG=$IMAGETAG docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_RAFT2 -f $COMPOSE_FILE_COUCH up -d 2>&1
-      docker ps -a
-    else
-      IMAGE_TAG=$IMAGETAG docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_COUCH up -d 2>&1
-      docker ps -a
-    fi
-  else
-    if [ "$CONSENSUS_TYPE" == "kafka" ]; then
-      IMAGE_TAG=$IMAGETAG docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_KAFKA up -d 2>&1
-      docker ps -a
-    elif  [ "$CONSENSUS_TYPE" == "etcdraft" ]; then
-      IMAGE_TAG=$IMAGETAG docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_RAFT2 up -d 2>&1
-      docker ps -a
-    else
-      IMAGE_TAG=$IMAGETAG docker-compose -f $COMPOSE_FILE up -d 2>&1
-      docker ps -a
-    fi
-  fi
+
+  IMAGE_TAG=$IMAGETAG docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_RAFT2 -f $COMPOSE_FILE_COUCH up -d 2>&1
+  docker ps -a
+
   if [ $? -ne 0 ]; then
     echo "ERROR !!!! Unable to start network"
     exit 1
@@ -139,9 +120,9 @@ function networkUp() {
 
 # Tear down running network
 function networkDown() {
-  # stop org3 containers also in addition to org1 and org2, in case we were running sample to add org3
+  
   # stop kafka and zookeeper containers in case we're running with kafka consensus-type
-  docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_KAFKA -f $COMPOSE_FILE_RAFT2 -f $COMPOSE_FILE_ORG3 down --volumes --remove-orphans
+  docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_RAFT2 down --volumes --remove-orphans
 
   # Bring down the network, deleting the volumes
   # Delete any ledger backups
@@ -151,13 +132,13 @@ function networkDown() {
   # Cleanup images
   removeUnwantedImages
   # remove orderer block and other channel configuration transactions and certs
-  rm -rf channel-artifacts/*.block channel-artifacts/*.tx crypto-config ./org3-artifacts/crypto-config/ channel-artifacts/org3.json
+  rm -rf channel-artifacts crypto-config
   # remove the docker-compose yaml file that was customized to the example
   rm -f docker-compose-e2e.yaml
 }
 
 function networkSuspend() {
-  docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_KAFKA -f $COMPOSE_FILE_RAFT2 -f $COMPOSE_FILE_ORG3 down --volumes --remove-orphans
+  docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_KAFKA -f $COMPOSE_FILE_RAFT2 -f down --volumes --remove-orphans
 }
 
 # Using docker-compose-e2e-template.yaml, replace constants with private key file names
@@ -365,8 +346,6 @@ CHANNEL_NAME="mychannel"
 COMPOSE_FILE=docker-compose-cli.yaml
 #
 COMPOSE_FILE_COUCH=docker-compose-couch.yaml
-# org3 docker compose file
-COMPOSE_FILE_ORG3=docker-compose-org3.yaml
 # kafka and zookeeper compose file
 COMPOSE_FILE_KAFKA=docker-compose-kafka.yaml
 # two additional etcd/raft orderers
@@ -375,11 +354,11 @@ COMPOSE_FILE_RAFT2=docker-compose-etcdraft2.yaml
 # use golang as the default language for chaincode
 LANGUAGE=golang
 # default image tag
-IMAGETAG="1.4.1-rc1"
+IMAGETAG="amd64-1.4.1-rc1"
 # default consensus type
 CONSENSUS_TYPE="etcdraft"
 # default world state storage
-IF_COUCHDB=$OPTARG="couchdb"
+IF_COUCHDB="couchdb"
 # Parse commandline args
 if [ "$1" = "-m" ]; then # supports old usage, muscle memory is powerful!
   shift
