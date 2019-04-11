@@ -1,11 +1,12 @@
 set -e
 
-echo "Install and institate chaincode"
+blue(){
+    echo -e "\033[34m$1\033[0m"
+}
 
-# now the location is in the chaincode 
 cd ../chaincode
-RUNTIME_PATH=$PWD
-echo "The runtime chaincode path is $RUNTIME_PATH"
+CC_PATH=$PWD
+blue "The runtime chaincode path is $CC_PATH."
 
 cd ../../../contract
 
@@ -13,16 +14,21 @@ for file in *; do
     cd $file
     for subFile in *; do
         if [ $subFile == *contract.go ]; then          
-            dirName=$RUNTIME_PATH/${subFile%_*}
+            dirName=$CC_PATH/${subFile%_*}
+            contractName=${subFile%_*}
             if [ -d $dirName ]; then
                 rm -rf $dirName
             fi
             mkdir $dirName
             cp $subFile $dirName
+            blue "Copy contract $contractName done."
+            break
         fi
     done
-    cd ..
+    break
 done
 
-echo "Copy contract done."
+blue "############################################"
 
+cd ../../deploy/docker-compose/scripts
+docker exec cli scripts/help.sh 0 1 resource 1.0 github.com/chaincode/resource mychannel '{"Args":["init"]}'
