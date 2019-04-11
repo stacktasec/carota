@@ -1,6 +1,7 @@
 export PATH=${PWD}/../bin:${PWD}:$PATH
 export FABRIC_CFG_PATH=${PWD}
 export VERBOSE=false
+export COMPOSE_PROJECT_NAME=net
 
 # Ask user for confirmation to proceed
 function askProceed() {
