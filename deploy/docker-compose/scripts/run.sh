@@ -24,3 +24,5 @@ for file in *; do
     cd ..
 done
 
+echo "Copy contract done."
+
