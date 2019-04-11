@@ -85,10 +85,9 @@ function checkPrereqs() {
 function networkUp() {
   checkPrereqs
   # generate artifacts if they don't exist
-  if [ ! -d "crypto-config" ]; then
-    generateCerts
-    replacePrivateKey
-    generateChannelArtifacts
+  if [ ! -d "crypto-config" ] || [ ! -d "channel-artifacts" ]; then
+    echo "crypto-config, channel-artifacts not found, please run generate"
+    exit 1
   fi
 
   IMAGE_TAG=$IMAGETAG docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_RAFT2 -f $COMPOSE_FILE_COUCH up -d 2>&1
@@ -99,17 +98,9 @@ function networkUp() {
     exit 1
   fi
 
-  if [ "$CONSENSUS_TYPE" == "kafka" ]; then
-    sleep 1
-    echo "Sleeping 10s to allow $CONSENSUS_TYPE cluster to complete booting"
-    sleep 9
-  fi
-
-  if [ "$CONSENSUS_TYPE" == "etcdraft" ]; then
-    sleep 1
-    echo "Sleeping 15s to allow $CONSENSUS_TYPE cluster to complete booting"
-    sleep 14
-  fi
+  sleep 1
+  echo "Sleeping 15s to allow $CONSENSUS_TYPE cluster to complete booting"
+  sleep 14
 
   # now run the end to end script
   docker exec cli scripts/script.sh $CHANNEL_NAME $CLI_DELAY $LANGUAGE $CLI_TIMEOUT $VERBOSE
@@ -122,7 +113,6 @@ function networkUp() {
 # Tear down running network
 function networkDown() {
   
-  # stop kafka and zookeeper containers in case we're running with kafka consensus-type
   docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_RAFT2 down --volumes --remove-orphans
 
   # Bring down the network, deleting the volumes
@@ -133,13 +123,9 @@ function networkDown() {
   # Cleanup images
   removeUnwantedImages
   # remove orderer block and other channel configuration transactions and certs
-  rm -rf channel-artifacts crypto-config
+  rm -rf crypto-config channel-artifacts
   # remove the docker-compose yaml file that was customized to the example
   rm -f docker-compose-e2e.yaml
-}
-
-function networkSuspend() {
-  docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_KAFKA -f $COMPOSE_FILE_RAFT2 -f down --volumes --remove-orphans
 }
 
 # Using docker-compose-e2e-template.yaml, replace constants with private key file names
@@ -274,17 +260,9 @@ function generateChannelArtifacts() {
   # named orderer.genesis.block or the orderer will fail to launch!
   echo "CONSENSUS_TYPE="$CONSENSUS_TYPE
   set -x
-  if [ "$CONSENSUS_TYPE" == "solo" ]; then
-    configtxgen -profile TwoOrgsOrdererGenesis -channelID byfn-sys-channel -outputBlock ./channel-artifacts/genesis.block
-  elif [ "$CONSENSUS_TYPE" == "kafka" ]; then
-    configtxgen -profile SampleDevModeKafka -channelID byfn-sys-channel -outputBlock ./channel-artifacts/genesis.block
-  elif [ "$CONSENSUS_TYPE" == "etcdraft" ]; then
-    configtxgen -profile SampleMultiNodeEtcdRaft -channelID byfn-sys-channel -outputBlock ./channel-artifacts/genesis.block
-  else
-    set +x
-    echo "unrecognized CONSESUS_TYPE='$CONSENSUS_TYPE'. exiting"
-    exit 1
-  fi
+
+  configtxgen -profile SampleMultiNodeEtcdRaft -channelID byfn-sys-channel -outputBlock ./channel-artifacts/genesis.block
+
   res=$?
   set +x
   if [ $res -ne 0 ]; then
@@ -345,13 +323,10 @@ CLI_DELAY=3
 CHANNEL_NAME="mychannel"
 # use this as the default docker-compose yaml definition
 COMPOSE_FILE=docker-compose-cli.yaml
-#
+# couch db 
 COMPOSE_FILE_COUCH=docker-compose-couch.yaml
-# kafka and zookeeper compose file
-COMPOSE_FILE_KAFKA=docker-compose-kafka.yaml
 # two additional etcd/raft orderers
 COMPOSE_FILE_RAFT2=docker-compose-etcdraft2.yaml
-#
 # use golang as the default language for chaincode
 LANGUAGE=golang
 # default image tag
@@ -360,62 +335,20 @@ IMAGETAG="amd64-1.4.1-rc1"
 CONSENSUS_TYPE="etcdraft"
 # default world state storage
 IF_COUCHDB="couchdb"
-# Parse commandline args
-if [ "$1" = "-m" ]; then # supports old usage, muscle memory is powerful!
-  shift
-fi
+
 MODE=$1
-shift
+
 # Determine whether starting, stopping, restarting, generating or upgrading
 if [ "$MODE" == "up" ]; then
   EXPMODE="Starting"
 elif [ "$MODE" == "down" ]; then
   EXPMODE="Stopping"
-elif [ "$MODE" == "suspend" ]; then
-  EXPMODE="Suspending"
 elif [ "$MODE" == "generate" ]; then
   EXPMODE="Generating certs and genesis block"
 else
   printHelp
   exit 1
 fi
-
-while getopts "h?c:t:d:f:s:l:i:o:v" opt; do
-  case "$opt" in
-  h | \?)
-    printHelp
-    exit 0
-    ;;
-  c)
-    CHANNEL_NAME=$OPTARG
-    ;;
-  t)
-    CLI_TIMEOUT=$OPTARG
-    ;;
-  d)
-    CLI_DELAY=$OPTARG
-    ;;
-  f)
-    COMPOSE_FILE=$OPTARG
-    ;;
-  s)
-    IF_COUCHDB=$OPTARG
-    ;;
-  l)
-    LANGUAGE=$OPTARG
-    ;;
-  i)
-    IMAGETAG=$(go env GOARCH)"-"$OPTARG
-    ;;
-  o)
-    CONSENSUS_TYPE=$OPTARG
-    ;;
-  v)
-    VERBOSE=true
-    ;;
-  esac
-done
-
 
 # Announce what was requested
 
@@ -437,8 +370,6 @@ elif [ "${MODE}" == "generate" ]; then ## Generate Artifacts
   generateCerts
   replacePrivateKey
   generateChannelArtifacts
-elif [ "${MODE}" == "suspend" ]; then
-  networkSuspend
 else
   printHelp
   exit 1
