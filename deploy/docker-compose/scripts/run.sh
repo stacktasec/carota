@@ -30,5 +30,4 @@ done
 
 blue "############################################"
 
-cd ../../deploy/docker-compose/scripts
-docker exec cli scripts/help.sh 0 1 resource 1.0 github.com/chaincode/resource mychannel '{"Args":["init"]}'
+docker exec cli scripts/help.sh 0 1 $contractName 1.0 github.com/chaincode/$contractName mychannel '{"Args":["init"]}'
