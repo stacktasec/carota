@@ -126,6 +126,14 @@ function networkDown() {
   rm -rf crypto-config channel-artifacts
   # remove the docker-compose yaml file that was customized to the example
   rm -f docker-compose-e2e.yaml
+
+  for file in chaincode/*; do
+
+    if [[ $file != *example02 ]];then
+      rm -rf $file
+    fi
+
+  done
 }
 
 # Using docker-compose-e2e-template.yaml, replace constants with private key file names

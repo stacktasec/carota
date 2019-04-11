@@ -1,0 +1,1 @@
+contract 下只建立一个合约目录，合约目录下只有一个合约源码文件，用 XXX_contract.go 命名。
