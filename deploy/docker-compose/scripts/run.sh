@@ -1,15 +1,26 @@
 set -e
 
-Contract_Path=../../../contract
-Runtime_Path=../chaincode
-
 echo "Install and institate chaincode"
 
-cp -r $Contract_Path/* $Runtime_Path
+# now the location is in the chaincode 
+cd ../chaincode
+RUNTIME_PATH=$PWD
+echo "The runtime chaincode path is $RUNTIME_PATH"
 
-cd $Runtime_Path
+cd ../../../contract
 
-for file in .; do
-    echo $file
+for file in *; do
+    cd $file
+    for subFile in *; do
+        if [ $subFile == *contract.go ]; then          
+            dirName=$RUNTIME_PATH/${subFile%_*}
+            if [ -d $dirName ]; then
+                rm -rf $dirName
+            fi
+            mkdir $dirName
+            cp $subFile $dirName
+        fi
+    done
+    cd ..
 done
 

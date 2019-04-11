@@ -1,1 +1,0 @@
-peer chaincode query -C mychannel -n resource -c '{"Args":["getAllUser"]}'
