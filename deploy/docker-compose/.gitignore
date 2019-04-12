@@ -1,5 +1,5 @@
 channel-artifacts/*
 crypto-config/*
-docker-compose-e2e.yaml
+docker-compose-ca.yaml
 chaincode/*
 ！chaincode/chaincode_example02
