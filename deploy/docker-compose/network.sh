@@ -111,29 +111,24 @@ function networkUp() {
 }
 
 # Tear down running network
-function networkDown() {
-  
-  docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_RAFT2 down --volumes --remove-orphans
-
-  # Bring down the network, deleting the volumes
-  # Delete any ledger backups
-  docker run -v $PWD:/tmp/first-network --rm hyperledger/fabric-tools:$IMAGETAG rm -Rf /tmp/first-network/ledgers-backup
-  # Cleanup the chaincode containers
-  clearContainers
-  # Cleanup images
-  removeUnwantedImages
+function networkDown() { 
   # remove orderer block and other channel configuration transactions and certs
   rm -rf crypto-config channel-artifacts
   # remove the docker-compose yaml file that was customized to the example
   rm -f docker-compose-e2e.yaml
-
+  # except example02, delete all chaincodes
   for file in chaincode/*; do
-
     if [[ $file != *example02 ]];then
       rm -rf $file
     fi
-
   done
+
+  # Bring down the network,
+  docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_RAFT2 down --volumes --remove-orphans
+  # Cleanup the chaincode containers
+  clearContainers
+  # Cleanup images
+  removeUnwantedImages
 }
 
 # Using docker-compose-e2e-template.yaml, replace constants with private key file names
