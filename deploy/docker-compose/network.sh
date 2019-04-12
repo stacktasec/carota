@@ -338,7 +338,7 @@ COMPOSE_FILE_RAFT2=docker-compose-etcdraft2.yaml
 # use golang as the default language for chaincode
 LANGUAGE=golang
 # default image tag
-IMAGETAG="amd64-1.4.1-rc1"
+IMAGETAG="amd64-1.4.1"
 # default consensus type
 CONSENSUS_TYPE="etcdraft"
 # default world state storage

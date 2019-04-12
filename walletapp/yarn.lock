@@ -3939,10 +3939,10 @@ fabric-client@latest:
     url "^0.11.0"
     winston "^2.2.0"
 
-fabric-network@~1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/fabric-network/-/fabric-network-1.4.0.tgz#7aa7c93084b90cff255387f30ff96edef736a5e4"
-  integrity sha512-JRQTJeANERQMj30qpdSBfy2nmh4Vf7gWSxOcJ5ow/DYbTeS616ehc5tqCTYmKQPMGD+h0f/F8vzVmEqjHaqj4Q==
+fabric-network@~1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/fabric-network/-/fabric-network-1.4.1.tgz#606d80e1683720dafa60607938d947c694bda21d"
+  integrity sha512-zBh90RpOm83Pbc0zf2KiKMB4wuDxdPzhlY7O5H9XC9oKH30rjxDGv1MENVqp9xlRCXygj+rf+5v74MZL4RBTxA==
   dependencies:
     fabric-ca-client latest
     fabric-client latest

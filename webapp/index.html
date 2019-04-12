@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title of the document</title>
+    <script src="http://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <button onclick="Evaluate()">
+        评估
+    </button>
+    <button onclick="Submit()">
+        提交
+    </button>
+    <div id="content">
+
+    </div>
+    <script>
+
+        function Evaluate() {
+            $.ajax({
+                url: 'http://localhost:3000/evaluate',
+                dataType: 'json',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    channel: 'mychannel',
+                    contract: 'resource',
+                    func: 'getAllUser',
+                    args: []
+                }),
+                success: function (res) {
+                    let str = JSON.stringify(res)
+                    $('#content').append(str);
+                    $('#content').append('<br/>');
+                }
+            })
+        }
+
+        function Submit() {
+            $.ajax({
+                url: 'http://localhost:3000/submit',
+                dataType: 'json',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    channel: 'mychannel',
+                    contract: 'resource',
+                    func: 'registerUser',
+                    args: ['hhh']
+                }),
+                success: function (res) {
+                    let str = JSON.stringify(res)
+                    $('#content').append(str);
+                    $('#content').append('<br/>');
+                }
+            })
+        }
+
+    </script>
+</body>
+
+</html>

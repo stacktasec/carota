@@ -61,7 +61,7 @@
     "cors": "^2.8.5",
     "element-ui": "^2.6.1",
     "express": "^4.16.4",
-    "fabric-network": "~1.4.0",
+    "fabric-network": "~1.4.1",
     "fs": "0.0.1-security",
     "path": "^0.12.7",
     "three": "^0.102.1",

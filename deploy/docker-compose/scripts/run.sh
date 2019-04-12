@@ -11,6 +11,9 @@ blue "The runtime chaincode path is $CC_PATH."
 cd ../../../contract
 
 for file in *; do
+    if [ ! -d $file ];then
+        continue
+    fi
     cd $file
     for subFile in *; do
         if [ $subFile == *contract.go ]; then          
