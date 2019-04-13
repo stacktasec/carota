@@ -34,21 +34,18 @@ async function main() {
 
         // Get the network (channel) our contract is deployed to.
         const network = await gateway.getNetwork('mychannel');
-        
+
         // Get the contract from the network.
         const contract = network.getContract('resource');
 
-        // Submit the specified transaction.
-        // createCar transaction - requires 5 argument, ex: ('createCar', 'CAR12', 'Honda', 'Accord', 'Black', 'Tom')
-        // changeCarOwner transaction - requires 2 args , ex: ('changeCarOwner', 'CAR10', 'Dave')
-        await contract.submitTransaction('registerUser', 'zzswer');
-        console.log('Transaction has been submitted');
-
-        // Disconnect from the gateway.
-        await gateway.disconnect();
+        // Evaluate the specified transaction.
+        // queryCar transaction - requires 1 argument, ex: ('queryCar', 'CAR4')
+        // queryAllCars transaction - requires no arguments, ex: ('queryAllCars')
+        const result = await contract.evaluateTransaction('getAllUser');
+        console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
 
     } catch (error) {
-        console.error(`Failed to submit transaction: ${error}`);
+        console.error(`Failed to evaluate transaction: ${error}`);
         process.exit(1);
     }
 }

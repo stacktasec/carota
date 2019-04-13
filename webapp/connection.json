@@ -27,6 +27,10 @@
     "orderers": {
         "orderer.example.com": {
             "url": "grpcs://localhost:7050",
+            "grpcOptions":{
+                "ssl-target-name-override": "orderer.example.com",
+                "grpc.keepalive_time_ms": 600000
+            },
             "tlsCACerts":{
                 "path":"../deploy/docker-compose/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
             }
@@ -52,19 +56,14 @@
     "peers": {
         "peer0.org1.example.com": {
             "url": "grpcs://localhost:7051",
+            "grpcOptions":{
+                "ssl-target-name-override": "peer0.org1.example.com",
+                "grpc.keepalive_time_ms": 600000
+            },
             "tlsCACerts":{
                 "path":"../deploy/docker-compose/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp/tlscacerts/tlsca.org1.example.com-cert.pem"
             }
-        },
-        "peer1.org1.example.com": {
-            "url": "grpcs://localhost:8051"
-        },
-        "peer0.org2.example.com": {
-            "url": "grpcs://localhost:9051"
-        },
-        "peer1.org2.example.com": {
-            "url": "grpcs://localhost:10051"
-        }
+        }     
     },
     "certificateAuthorities": {
         "ca.org1.example.com": {
