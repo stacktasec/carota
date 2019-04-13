@@ -111,7 +111,9 @@ function networkUp() {
 }
 
 # Tear down running network
-function networkDown() { 
+function networkDown() {
+  # delete previous creds
+  rm -rf ~/.hfc-key-store/*
   # remove orderer block and other channel configuration transactions and certs
   rm -rf crypto-config channel-artifacts
   # remove the docker-compose yaml file that was customized to the example
