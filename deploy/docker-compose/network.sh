@@ -90,7 +90,7 @@ function networkUp() {
     exit 1
   fi
 
-  IMAGE_TAG=$IMAGETAG docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_RAFT2 -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_CA up -d 2>&1
+  IMAGE_TAG=$IMAGETAG COUCHDB_TAG=$COUCHDBTAG docker-compose -f $COMPOSE_FILE -f $COMPOSE_FILE_RAFT2 -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_CA up -d 2>&1
   docker ps -a
 
   if [ $? -ne 0 ]; then
@@ -338,6 +338,8 @@ IMAGETAG="amd64-1.4.1"
 CONSENSUS_TYPE="etcdraft"
 # default world state storage
 IF_COUCHDB="couchdb"
+# couchdb ver
+COUCHDBTAG="amd64-0.4.15"
 
 MODE=$1
 
