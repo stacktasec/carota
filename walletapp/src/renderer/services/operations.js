@@ -1,8 +1,9 @@
 /* eslint-disable */
 
-const { FileSystemWallet, Gateway } = require('fabric-network');
-const fs = require('fs');
-const path = require('path');
+import { FileSystemWallet, Gateway } from 'fabric-network'
+import fs from 'fs'
+import path from 'path'
+import yaml from 'js-yaml'
 
 function discoveryWallet() {
 
@@ -18,14 +19,11 @@ function discoveryWallet() {
 
 async function connectToFabric(user) {
   try {
-    const ccpPath = path.resolve(process.cwd(), 'connection.json');
-    const ccpJSON = fs.readFileSync(ccpPath, 'utf8');
-    const ccp = JSON.parse(ccpJSON);
     const walletPath = path.resolve(process.cwd(), 'wallet');;
     const wallet = new FileSystemWallet(walletPath);
-
     const gateway = new Gateway();
-    await gateway.connect(ccp, { wallet, identity: user, discovery: { enabled: false } });
+    const connectionProfile = yaml.safeLoad(fs.readFileSync('connection.yaml', 'utf8'));
+    await gateway.connect(connectionProfile, { wallet, identity: user, discovery: { enabled: true } });
     return new WalletService(gateway);
   } catch (error) {
     return null;
