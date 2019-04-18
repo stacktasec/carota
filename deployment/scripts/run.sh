@@ -8,7 +8,7 @@ cd ../chaincode
 CC_PATH=$PWD
 blue "The runtime chaincode path is $CC_PATH."
 
-cd ../../../contract
+cd ../../contracts
 
 for file in *; do
     if [ ! -d $file ];then

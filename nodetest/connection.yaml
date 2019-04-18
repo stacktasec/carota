@@ -16,14 +16,14 @@ peers:
     grpcOptions:
       ssl-target-name-override: peer0.org1.example.com
     tlsCACerts:
-      path: ../deploy/docker-compose/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp/tlscacerts/tlsca.org1.example.com-cert.pem 
+      path: ../deployment/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp/tlscacerts/tlsca.org1.example.com-cert.pem 
 orderers: 
   orderer.example.com: 
     url: grpcs://localhost:7050,
     grpcOptions:
       ssl-target-name-override: orderer.example.com
     tlsCACerts:
-      path: ../deploy/docker-compose/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+      path: ../deployment/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 certificateAuthorities:
   ca.org1.example.com:
     url: https://localhost:7054
