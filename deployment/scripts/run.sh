@@ -1,3 +1,5 @@
+# This script only install and instantiate contract on fixed peer.
+
 set -e
 
 blue(){
@@ -24,13 +26,13 @@ for file in *; do
             fi
             mkdir $dirName
             cp $subFile $dirName
-            blue "Copy contract $contractName done."
-            break
+            docker exec cli scripts/help.sh 0 1 $contractName 1.0 github.com/chaincode/$contractName mychannel '{"Args":["init"]}'
+            blue "Contract $contractName instantiated done."
         fi
     done
-    break
+    cd ..
 done
 
-blue "############################################"
-
-docker exec cli scripts/help.sh 0 1 $contractName 1.0 github.com/chaincode/$contractName mychannel '{"Args":["init"]}'
+blue "###############################################"
+blue "All contracts instantiated done."
+blue "###############################################"
